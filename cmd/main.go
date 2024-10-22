@@ -22,6 +22,13 @@ func main() {
 	}
 }
 
+func initRoutes(e Engine) Engine {
+	e.GET("/", api.HandleHelthCheck)
+	e.POST("/webhook", api.Webhook)
+	e.POST("/api/v1/verifications", api.HandleVerificationRequest)
+	return e
+}
+
 func newEngine() Engine {
 	e := gin.New()
 	e.Use(gin.Recovery())
@@ -31,7 +38,7 @@ func newEngine() Engine {
 func address(localonly ...bool) string {
 	// TODO: 環境変数でPORTを取得する
 	const port uint16 = 10943
-	// TODO: 環境変数でHOSTTを取得する
+	// TODO: 環境変数でHOSTを取得する
 	var host string
 	if len(localonly) > 0 && localonly[0] {
 		host = "localhost"
@@ -46,11 +53,4 @@ func isLocal() bool {
 	}
 	local, err := strconv.ParseBool(v)
 	return local || err != nil
-}
-
-func initRoutes(e Engine) Engine {
-	e.GET("/", api.HandleHelthCheck)
-	e.POST("/webhook", api.Webhook)
-	e.POST("/api/v1/verifications", api.HandleVerificationRequest)
-	return e
 }
